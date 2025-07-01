@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>生成式AI投资研究助手</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 35px;
+            font-size: 2.5em;
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 15px;
+        }
+        .section-title {
+            color: #34495e;
+            font-size: 1.8em;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            border-left: 5px solid #007bff;
+            padding-left: 10px;
+        }
+        .category-box {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            background-color: #fdfdfd;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+        .category-box h2 {
+            margin-top: 0;
+            color: #34495e;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .category-box h2::before {
+            content: "✨";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .category-box select, .category-box textarea, .category-box input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 12px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1.05em;
+            box-sizing: border-box;
+            transition: border-color 0.3s ease;
+        }
+        .category-box select:focus, .category-box textarea:focus, .category-box input[type="text"]:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.2);
+        }
+        .category-box textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .suggestions {
+            margin-top: 10px;
+        }
+        .suggestions button {
+            background-color: #e9f5ff;
+            border: 1px solid #b3d7ff;
+            padding: 9px 15px;
+            margin: 5px 8px 5px 0;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.95em;
+            color: #0056b3;
+            transition: background-color 0.2s, border-color 0.2s, transform 0.2s;
+        }
+        .suggestions button:hover {
+            background-color: #d1e7ff;
+            border-color: #9acafc;
+            transform: translateY(-2px);
+        }
+        .info-selection {
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            background-color: #fdfdfd;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+        }
+        .info-selection h2 {
+            margin-top: 0;
+            color: #34495e;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        .info-selection h2::before {
+            content: "📚";
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        .info-selection label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 1.05em;
+            cursor: pointer;
+            color: #555;
+        }
+        .info-selection input[type="checkbox"] {
+            margin-right: 12px;
+            transform: scale(1.3);
+            accent-color: #007bff;
+        }
+        .generate-button {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.3em;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: background-color 0.3s ease, transform 0.2s;
+            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+        }
+        .generate-button:hover {
+            background-color: #0056b3;
+            transform: translateY(-2px);
+        }
+        .output-box {
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 25px;
+            margin-top: 30px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 1em;
+            color: #343a40;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .output-box pre {
+            margin: 0;
+            padding: 0;
+        }
+        .copy-button {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background-color: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.2s;
+        }
+        .copy-button:hover {
+            background-color: #5a6268;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 0.9em;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ 生成式AI投资研究提示词助手 ✨</h1>
+        <p style="text-align: center; margin-bottom: 30px; color: #555;">
+            利用AI助您高效生成中国和美国二级市场投资研究报告的详细提示词。
+        </p>
+
+        <div class="category-box">
+            <h2>1. 角色设定 (Role)</h2>
+            <textarea id="roleInput" placeholder="例如：一位在全球顶级投资银行（如高盛、摩根士丹利）工作的资深股票研究分析师。你的分析以深度、严谨和数据驱动而著称。"></textarea>
+            <div class="suggestions">
+                <button onclick="addSuggestion('roleInput', '一位经验丰富的基金经理，专注于识别被低估的成长型公司。')">基金经理</button>
+                <button onclick="addSuggestion('roleInput', '一位独立研究员，以批判性思维和独特的视角著称。')">独立研究员</button>
+                <button onclick="addSuggestion('roleInput', '一位注重基本面分析的价值投资者。')">价值投资者</button>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <h2>2. 核心任务 (Objective)</h2>
+            <input type="text" id="companyName" placeholder="请在此处输入公司全名，例如：腾讯控股">
+            <input type="text" id="stockCode" placeholder="请在此处输入股票代码，例如：0700.HK / TCEHY">
+            <textarea id="objectiveInput" placeholder="例如：为 [公司全名] (股票代码: [股票代码]) 生成一份全面、专业、可供决策的深度投资分析报告。"></textarea>
+            <div class="suggestions">
+                <button onclick="addSuggestion('objectiveInput', '生成一份对 [公司全名] ([股票代码]) 的详细财务模型与估值分析。')">财务模型与估值</button>
+                <button onclick="addSuggestion('objectiveInput', '分析 [公司全名] ([股票代码]) 在未来五年内的增长潜力与市场风险。')">增长潜力与风险</button>
+                <button onclick="addSuggestion('objectiveInput', '对比分析 [公司全名] ([股票代码]) 与其主要竞争对手的市场表现和竞争优势。')">竞争对手对比</button>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <h2>3. 报告受众 (Audience)</h2>
+            <textarea id="audienceInput" placeholder="例如：此报告的目标读者为机构投资者（如共同基金、对冲基金的基金经理）和具备专业金融知识的个人投资者。"></textarea>
+            <div class="suggestions">
+                <button onclick="addSuggestion('audienceInput', '希望快速了解公司核心价值的非专业投资者。')">非专业投资者</button>
+                <button onclick="addSuggestion('audienceInput', '寻求详细数据支持和深入论证的专业分析师。')">专业分析师</button>
+                <button onclick="addSuggestion('audienceInput', '大学商学院的学生，用于案例研究。')">商学院学生</button>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <h2>4. 数据与时间范围 (Data & Timeframe)</h2>
+            <textarea id="dataTimeframeInput" placeholder="例如：请使用截至 [指定日期，如“当前最新”] 的所有公开可用数据。数据来源应包括但不限于：公司最新年报 (10-K/年报)、季报 (10-Q/季报)、投资者关系演示文稿、官方新闻稿以及权威财经媒体的报道。财务分析应至少涵盖过去 3-5 个财年。"></textarea>
+            <div class="suggestions">
+                <button onclick="addSuggestion('dataTimeframeInput', '使用截至2024年12月31日的所有公开数据，重点关注近两年财报。')">近两年财报</button>
+                <button onclick="addSuggestion('dataTimeframeInput', '引用过去十年的历史数据，特别是宏观经济数据和行业趋势。')">十年历史数据</button>
+                <button onclick="addSuggestion('dataTimeframeInput', '侧重于最新的季度报告和公司电话会议纪要。')">最新季报与会议</button>
+            </div>
+        </div>
+
+        <div class="category-box">
+            <h2>5. 格式要求 (Formatting)</h2>
+            <textarea id="formattingInput" placeholder="例如：请使用 Markdown 进行排版，确保报告结构清晰、易于阅读。关键数据和对比分析请使用表格 (Table) 呈现。在进行估值等需要假设的分析时，请务必明确注明你的关键假设。"></textarea>
+            <div class="suggestions">
+                <button onclick="addSuggestion('formattingInput', '报告应简洁明了，突出关键结论，不超过2000字。')">简洁明了</button>
+                <button onclick="addSuggestion('formattingInput', '使用专业术语，详细阐述每个分析点，可以包含图表建议。')">详细专业</button>
+                <button onclick="addSuggestion('formattingInput', '以问答形式呈现，回答常见投资问题。')">问答形式</button>
+            </div>
+        </div>
+
+        <div class="info-selection">
+            <h2>💡 请选择要包含的信息类型：</h2>
+            <label><input type="checkbox" class="info-checkbox" value="executive_summary" checked> 投资摘要 (Executive Summary)</label>
+            <label><input type="checkbox" class="info-checkbox" value="company_overview" checked> 公司概览 (Company Overview)</label>
+            <label><input type="checkbox" class="info-checkbox" value="industry_analysis" checked> 行业分析与竞争格局 (Industry Analysis & Competitive Landscape)</label>
+            <label><input type="checkbox" class="info-checkbox" value="financial_analysis" checked> 财务分析 (Financial Analysis)</label>
+            <label><input type="checkbox" class="info-checkbox" value="valuation" checked> 估值分析 (Valuation)</label>
+            <label><input type="checkbox" class="info-checkbox" value="competitive_moat"> 竞争优势/护城河 (Competitive Moat)</label>
+            <label><input type="checkbox" class="info-checkbox" value="management_governance"> 管理层与公司治理 (Management & Governance)</label>
+            <label><input type="checkbox" class="info-checkbox" value="risk_analysis"> 风险分析 (Risk Analysis)</label>
+            <label><input type="checkbox" class="info-checkbox" value="esg_analysis"> ESG 分析 (Environmental, Social, and Governance)</label>
+            <label><input type="checkbox" class="info-checkbox" value="investment_thesis" checked> 投资论点总结与建议 (Investment Thesis & Recommendation)</label>
+        </div>
+
+        <button class="generate-button" onclick="generatePrompt()">生成AI提示词</button>
+
+        <div class="output-box" id="outputBox" style="display:none;">
+            <button class="copy-button" onclick="copyToClipboard()">复制</button>
+            <pre id="generatedPrompt"></pre>
+        </div>
+
+        <div class="footer">
+            <p>&copy; 2024 生成式AI投资研究助手. 版权所有.</p>
+        </div>
+    </div>
+
+    <script>
+        function addSuggestion(elementId, suggestion) {
+            document.getElementById(elementId).value = suggestion;
+        }
+
+        const infoSections = {
+            executive_summary: `### 第一部分：投资摘要 (Executive Summary)
+- **核心投资论点：** 一段式总结，清晰说明为什么现在值得关注这家公司。
+- **关键驱动因素与催化剂：** 列出推动股价上涨的核心因素。
+- **主要风险：** 简述可能导致投资逻辑失效的关键风险。
+- **估值与评级：** 明确给出你的估值区间、未来 12-18 个月的目标价 (Price Target) 和投资评级（例如：买入/持有/卖出）。`,
+            company_overview: `### 第二部分：公司概览 (Company Overview)
+- **业务模式：** 公司如何赚钱？核心产品/服务是什么？收入构成（按业务部门和地理区域划分）。
+- **市场地位与规模：** 公司在行业内的领导地位、市场份额和品牌影响力。
+- **近期动态与战略方向：** 公司近期的重要举动（如并购、新产品发布）和管理层设定的未来战略。`,
+            industry_analysis: `### 第三部分：行业分析与竞争格局 (Industry Analysis & Competitive Landscape)
+- **行业洞察：** 分析公司所处行业的市场规模、增长前景、周期性和主要技术/消费趋势。
+- **竞争分析 (Porter's Five Forces)：** 运用波特五力模型分析行业的竞争激烈程度、新进入者威胁、替代品威胁、供应商议价能力和购买者议价能力。
+- **核心竞争对手对标：** 识别 2-3 家核心竞争对手，并从市场份额、产品矩阵、技术优势、盈利能力等维度进行横向对比（建议使用表格）。`,
+            financial_analysis: `### 第四部分：财务分析 (Financial Analysis)
+- **历史业绩回顾：** 深入分析过去 3-5 年的利润表、资产负债表和现金流量表，重点关注收入、利润和现金流的增长质量与可持续性。
+- **核心财务比率分析：**
+  - **盈利能力 (Profitability):** 毛利率, 营业利润率, 净利率, 股本回报率 ($ROE$), 资产回报率 ($ROA$)。
+  - **偿债能力 (Solvency):** 资产负债率 (Debt-to-Equity), 利息保障倍数 (Interest Coverage Ratio)。
+  - **流动性 (Liquidity):** 流动比率 (Current Ratio), 速动比率 (Quick Ratio)。
+  - **运营效率 (Efficiency):** 总资产周转率 (Asset Turnover), 应收账款周转天数 (DSO)。
+- **同业对比：** 将上述关键比率与行业平均水平及主要竞争对手进行比较。`,
+            valuation: `### 第五部分：估值分析 (Valuation)
+- **相对估值法 (Relative Valuation):** 分析公司当前和历史的市盈率 (P/E)、市销率 (P/S)、企业价值/EBITDA (EV/EBITDA) 等估值倍数。并与主要竞争对手进行对比，论证其估值是偏高还是偏低。
+- **绝对估值法 (Intrinsic Valuation):** 建立一个简化的贴现现金流模型 (Discounted Cash Flow - DCF)。请明确列出你的核心假设，包括：未来 5 年的自由现金流增长率、永续增长率 (Perpetual Growth Rate) 和加权平均资本成本 (WACC)，并基于此模型测算公司的内在价值。`,
+            competitive_moat: `### 第六部分：竞争优势/护城河 (Competitive Moat)
+- **护城河识别：** 深入分析并识别公司的核心护城河是什么（例如：无形资产、转换成本、网络效应、成本优势）。
+- **护城河可持续性评估：** 评估该护城河的宽度和可持续性，即它能在多大程度上抵御竞争对手的侵蚀。`,
+            management_governance: `### 第七部分：管理层与公司治理 (Management & Governance)
+- **管理团队评估：** 评估核心管理层（特别是 CEO 和 CFO）的背景、能力、过往业绩和资本配置能力。
+- **股权结构与激励：** 分析主要股东构成、管理层持股比例以及高管薪酬激励计划是否与股东利益一致。`,
+            risk_analysis: `### 第八部分：风险分析 (Risk Analysis)
+- 详细列出投资该公司面临的系统性风险，包括但不限于：宏观经济风险、行业竞争加剧风险、技术颠覆风险、供应链风险、监管政策风险以及公司特有的运营风险。并对每个风险的潜在影响进行评估。`,
+            esg_analysis: `### 第九部分：ESG 分析 (Environmental, Social, and Governance)
+- 评估公司在环境、社会责任和公司治理方面的表现、机遇与风险。分析其 ESG 评级以及这可能如何影响其长期估值和声誉。`,
+            investment_thesis: `### 第十部分：投资论点总结与建议 (Investment Thesis & Recommendation)
+- **看多理由 (Bull Case):** 清晰总结 3-4 个支持你“买入”或“持有”评级的核心逻辑。
+- **看空理由 (Bear Case):** 客观陈述 3-4 个可能导致股价下跌的潜在因素。
+- **最终结论：** 综合以上所有分析，重申你的投资评级、目标价和投资时间框架，并给出一个最终的、令人信服的结论。`
+        };
+
+        function generatePrompt() {
+            const role = document.getElementById('roleInput').value || "请你扮演一位在全球顶级投资银行（如高盛、摩根士丹利）工作的资深股票研究分析师。你的分析以深度、严谨和数据驱动而著称。";
+            let objective = document.getElementById('objectiveInput').value;
+            const companyName = document.getElementById('companyName').value.trim();
+            const stockCode = document.getElementById('stockCode').value.trim();
+
+            if (!companyName) {
+                alert("请输入公司全名！");
+                return;
+            }
+            if (!stockCode) {
+                alert("请输入股票代码！");
+                return;
+            }
+
+            if (!objective.includes('[公司全名]') && !objective.includes('[股票代码]')) {
+                 objective = `为 **${companyName}** (股票代码: **${stockCode}**) 生成一份全面、专业、可供决策的深度投资分析报告。`;
+            } else {
+                 objective = objective.replace('[公司全名]', `**${companyName}**`).replace('[股票代码]', `**${stockCode}**`);
+            }
+
+            const audience = document.getElementById('audienceInput').value || "此报告的目标读者为机构投资者（如共同基金、对冲基金的基金经理）和具备专业金融知识的个人投资者。";
+            const dataTimeframe = document.getElementById('dataTimeframeInput').value || "请使用截至当前最新的所有公开可用数据。数据来源应包括但不限于：公司最新年报 (10-K/年报)、季报 (10-Q/季报)、投资者关系演示文稿 (Investor Presentations)、官方新闻稿以及权威财经媒体的报道。财务分析应至少涵盖过去 3-5 个财年，以便进行趋势分析。";
+            const formatting = document.getElementById('formattingInput').value || "请使用 Markdown 进行排版，确保报告结构清晰、易于阅读。关键数据和对比分析请使用表格 (Table) 呈现。在进行估值等需要假设的分析时，请务必明确注明你的关键假设。";
+
+            let selectedInfo = [];
+            document.querySelectorAll('.info-checkbox:checked').forEach(checkbox => {
+                selectedInfo.push(infoSections[checkbox.value]);
+            });
+
+            let prompt = `# Prompt: 生成一份专业级深度股票研究报告
+
+**## 1. 角色设定 (Role)**
+${role}
+
+**## 2. 核心任务 (Objective)**
+${objective}
+
+**## 3. 报告受众 (Audience)**
+${audience}
+
+**## 4. 数据与时间范围 (Data & Timeframe)**
+${dataTimeframe}
+
+**## 5. 报告结构与核心要求 (Required Structure & Content)**
+请严格按照以下 ${selectedInfo.length} 个部分组织报告，并对每一部分进行深入探讨：
+
+${selectedInfo.join('\n\n')}
+
+**## 6. 格式要求 (Formatting)**
+${formatting}
+`;
+
+            document.getElementById('generatedPrompt').textContent = prompt;
+            document.getElementById('outputBox').style.display = 'block';
+        }
+
+        function copyToClipboard() {
+            const promptText = document.getElementById('generatedPrompt').textContent;
+            navigator.clipboard.writeText(promptText).then(() => {
+                alert('提示词已复制到剪贴板！');
+            }).catch(err => {
+                console.error('无法复制文本: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
